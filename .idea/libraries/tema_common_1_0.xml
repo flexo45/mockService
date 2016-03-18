@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="tema-common-1.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/tema-common-1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

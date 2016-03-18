@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5">
+
+    <servlet>
+        <servlet-name>EchoServlet</servlet-name>
+        <servlet-class>com.temafon.qa.mock.servlets.echo.EchoServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>JmsPoolMonitorServlet</servlet-name>
+        <servlet-class>com.temafon.qa.mock.servlets.jms.JmsPoolMonitorServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>MORequestServlet</servlet-name>
+        <servlet-class>com.temafon.qa.mock.servlets.jms.morequest.MORequestServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>TextMessageServlet</servlet-name>
+        <servlet-class>com.temafon.qa.mock.servlets.jms.textmessage.TextMessageServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>CustomCallbackServlet</servlet-name>
+        <servlet-class>com.temafon.qa.mock.servlets.callback.CustomCallbackServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>SetConfigServlet</servlet-name>
+        <servlet-class>com.temafon.qa.mock.servlets.config.SetConfigServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>SendMailServlet</servlet-name>
+        <servlet-class>com.temafon.qa.mock.servlets.mail.SendMailServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>EchoServlet</servlet-name>
+        <url-pattern>/echo</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>JmsPoolMonitorServlet</servlet-name>
+        <url-pattern>/jmspool</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>MORequestServlet</servlet-name>
+        <url-pattern>/morequest</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>TextMessageServlet</servlet-name>
+        <url-pattern>/textmessage</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CustomCallbackServlet</servlet-name>
+        <url-pattern>/customcallback</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SetConfigServlet</servlet-name>
+        <url-pattern>/config</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SendMailServlet</servlet-name>
+        <url-pattern>/sendmail</url-pattern>
+    </servlet-mapping>
+
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+</web-app>

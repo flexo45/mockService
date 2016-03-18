@@ -1,0 +1,31 @@
+<component name="ArtifactManager">
+  <artifact build-on-make="true" name="MockService:war">
+    <output-path>$PROJECT_DIR$/out/artifacts/MockService_war</output-path>
+    <root id="root">
+      <element id="archive" name="MockService.war">
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/webapp/META-INF/MANIFEST.MF" />
+        </element>
+        <element id="directory" name="WEB-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/webapp/WEB-INF/web.xml" />
+          <element id="directory" name="classes">
+            <element id="module-output" name="mock_servlets" />
+            <element id="extracted-dir" path="$PROJECT_DIR$/lib/jms-api-2.0.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$PROJECT_DIR$/lib/jaxm-api-5.0.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$PROJECT_DIR$/lib/imq-5.0.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/code/gson/gson/1.7.1/gson-1.7.1.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$MAVEN_REPOSITORY$/commons-codec/commons-codec/1.10/commons-codec-1.10.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$PROJECT_DIR$/lib/tema-audit-common-1.0.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$PROJECT_DIR$/lib/tema-common-1.0.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/freemarker/freemarker/2.3.20/freemarker-2.3.20.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$MAVEN_REPOSITORY$/javax/activation/activation/1.1/activation-1.1.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$MAVEN_REPOSITORY$/javax/mail/mail/1.4/mail-1.4.jar" path-in-jar="/" />
+          </element>
+        </element>
+        <element id="directory" name="templates">
+          <element id="dir-copy" path="$PROJECT_DIR$/templates" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
