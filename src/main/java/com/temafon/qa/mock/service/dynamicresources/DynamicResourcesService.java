@@ -1,15 +1,12 @@
 package com.temafon.qa.mock.service.dynamicresources;
 
-import com.temafon.qa.mock.service.accounts.AccountService;
-import com.temafon.qa.mock.service.accounts.UserProfile;
 import com.temafon.qa.mock.service.data.DBException;
 import com.temafon.qa.mock.service.data.DBManager;
 import com.temafon.qa.mock.service.data.dataSet.DispatchStrategy;
-import com.temafon.qa.mock.service.data.dataSet.DynamicResource;
 import com.temafon.qa.mock.service.data.dataSet.Method;
-import com.temafon.qa.mock.service.data.dataSet.Script;
+import com.temafon.qa.mock.service.dynamicresources.cach.DynamicResourcesCache;
+import com.temafon.qa.mock.service.dynamicresources.resource.DynamicResourceItem;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DynamicResourcesService {
@@ -23,40 +20,20 @@ public class DynamicResourcesService {
         return instance;
     }
 
-    private List<DynamicResourceItem> dynamicResourceItemList;
-
-
+    private DynamicResourcesCache dynamicResourcesCache;
 
     private DynamicResourcesService(){
-
+        dynamicResourcesCache = new DynamicResourcesCache();
     }
 
     public List<DynamicResourceItem> getDynamicResourceItemList(){
-
-        if(dynamicResourceItemList == null){
-            try {
-                List<DynamicResource> list = DBManager.getInstance().getDynamicResourceDataManager()
-                        .selectAllDynamicResources();
-
-                this.dynamicResourceItemList = new ArrayList<>();
-
-                for(DynamicResource it : list){
-                    dynamicResourceItemList.add(new DynamicResourceItem(it.getPath(), it.getMethod().getName(), it.getDispatch_strategy().getName()));
-                }
-
-                return  dynamicResourceItemList;
-            }
-            catch (DBException e){
-                e.printStackTrace();
-            }
-        }
-        return dynamicResourceItemList;
+        return dynamicResourcesCache.getDynamicResourcesItemList();
     }
 
     public void addDynamicResource(DynamicResourceItem item){
         try {
-            Method method = DBManager.getInstance().getDynamicResourceDataManager().getMethod(item.getMethod());
-            DispatchStrategy strategy = DBManager.getInstance().getDynamicResourceDataManager().getStrategy(item.getStrategy());
+            Method method = DBManager.getInstance().getDynamicResourceDataManager().getMethod(item.getMethod().toString());
+            DispatchStrategy strategy = DBManager.getInstance().getDynamicResourceDataManager().getStrategy(item.getStrategy().toString());
 
             long resourceId = DBManager.getInstance().getDynamicResourceDataManager()
                     .addDynamicResource(item.getPath(), method.getId(), strategy.getId());
@@ -64,6 +41,8 @@ public class DynamicResourcesService {
             if(item.getScript() != null){
                 DBManager.getInstance().getDynamicResourceDataManager().addScript(item.getScript(), resourceId);
             }
+
+            dynamicResourcesCache.cacheNotActual();
         }
         catch (DBException ex){
             ex.printStackTrace();
@@ -71,16 +50,10 @@ public class DynamicResourcesService {
     }
 
     public DynamicResourceItem getDynamicResource(String path){
-        try {
-            DynamicResource dynamicResource = DBManager.getInstance().getDynamicResourceDataManager()
-                    .getDynamicResource(path);
-
-            return new DynamicResourceItem(dynamicResource.getPath()
-                    , dynamicResource.getMethod().getName()
-                    , dynamicResource.getDispatch_strategy().getName());
-        }
-        catch (DBException ex){
-            ex.printStackTrace();
+        for(DynamicResourceItem it : dynamicResourcesCache.getDynamicResourcesItemList()){
+            if(it.getPath().equals(path)){
+                return it;
+            }
         }
         return null;
     }

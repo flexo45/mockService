@@ -4,14 +4,18 @@ import com.temafon.qa.mock.service.accounts.AccountService;
 import com.temafon.qa.mock.service.accounts.UserProfile;
 import com.temafon.qa.mock.service.data.DBException;
 import com.temafon.qa.mock.service.data.DBManager;
-import com.temafon.qa.mock.service.data.DynamicResourceDataManager;
-import com.temafon.qa.mock.service.dynamicresources.DynamicResourceItem;
+import com.temafon.qa.mock.service.data.dataSet.DynamicResource;
+import com.temafon.qa.mock.service.dynamicresources.resource.DynamicResourceItem;
 import com.temafon.qa.mock.service.dynamicresources.DynamicResourcesService;
+import com.temafon.qa.mock.service.dynamicresources.constants.RestMethods;
+import com.temafon.qa.mock.service.dynamicresources.constants.Strategy;
 import com.temafon.qa.mock.service.managedpool.JmsPoolManager;
+import com.temafon.qa.mock.service.scripthandler.GroovyHandler;
 import com.temafon.qa.mock.servlets.administration.AdminServlet;
 import com.temafon.qa.mock.servlets.administration.SignInServlet;
 import com.temafon.qa.mock.servlets.administration.SignOutServlet;
 import com.temafon.qa.mock.servlets.config.SetConfigServlet;
+import com.temafon.qa.mock.servlets.dynamicresource.DynamicResourceDispatherServlet;
 import com.temafon.qa.mock.servlets.echo.EchoServlet;
 import com.temafon.qa.mock.servlets.jms.JmsPoolMonitorServlet;
 import com.temafon.qa.mock.servlets.jms.morequest.MORequestServlet;
@@ -42,6 +46,8 @@ public class MockService {
 
         servletContextHandler.addServlet(new ServletHolder(new SignOutServlet()), SignOutServlet.path);
 
+        servletContextHandler.addServlet(new ServletHolder(new DynamicResourceDispatherServlet()), DynamicResourceDispatherServlet.path);
+
         servletContextHandler.addServlet(new ServletHolder(new SetConfigServlet()), "/config");
 
         servletContextHandler.addServlet(new ServletHolder(new JmsPoolMonitorServlet()), "/jmspool");
@@ -65,20 +71,21 @@ public class MockService {
 
         try {
 
-            DBManager.getInstance().getDynamicResourceDataManager().addMethod("GET");
-            DBManager.getInstance().getDynamicResourceDataManager().addMethod("POST");
+            DBManager.getInstance().getDynamicResourceDataManager().addMethod(RestMethods.GET.toString());
+            DBManager.getInstance().getDynamicResourceDataManager().addMethod(RestMethods.POST.toString());
 
-            DBManager.getInstance().getDynamicResourceDataManager().addStrategy("Script");
-            DBManager.getInstance().getDynamicResourceDataManager().addStrategy("Sequence");
-            DBManager.getInstance().getDynamicResourceDataManager().addStrategy("Random");
+            DBManager.getInstance().getDynamicResourceDataManager().addStrategy(Strategy.SCRIPT.toString());
+            DBManager.getInstance().getDynamicResourceDataManager().addStrategy(Strategy.SEQUENCE.toString());
+            DBManager.getInstance().getDynamicResourceDataManager().addStrategy(Strategy.RANDOM.toString());
+
         }
         catch (DBException e){
             e.printStackTrace();
         }
 
-        DynamicResourcesService.getInstance().addDynamicResource(new DynamicResourceItem("testres", "GET", "Sequence"));
-        DynamicResourcesService.getInstance().addDynamicResource(new DynamicResourceItem("notify", "GET", "Random"));
-        DynamicResourcesService.getInstance().addDynamicResource(new DynamicResourceItem("simple_service", "POST", "Script"));
+        DynamicResourcesService.getInstance().addDynamicResource(new DynamicResourceItem("testres", RestMethods.GET, Strategy.SCRIPT));
+        DynamicResourcesService.getInstance().addDynamicResource(new DynamicResourceItem("notify", RestMethods.GET, Strategy.SCRIPT));
+        DynamicResourcesService.getInstance().addDynamicResource(new DynamicResourceItem("simple_service", RestMethods.POST, Strategy.SCRIPT));
     }
 
 }

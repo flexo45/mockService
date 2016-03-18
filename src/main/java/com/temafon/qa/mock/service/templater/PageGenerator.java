@@ -1,7 +1,7 @@
 package com.temafon.qa.mock.service.templater;
 
 import com.temafon.qa.mock.service.accounts.UserProfile;
-import com.temafon.qa.mock.service.dynamicresources.DynamicResourceItem;
+import com.temafon.qa.mock.service.dynamicresources.resource.DynamicResourceItem;
 import com.temafon.qa.mock.service.dynamicresources.DynamicResourcesService;
 import com.temafon.qa.mock.servlets.administration.AdminServlet;
 import freemarker.template.Configuration;
@@ -137,7 +137,8 @@ public class PageGenerator {
 
         for(DynamicResourceItem resourceItem : DynamicResourcesService.getInstance().getDynamicResourceItemList()){
             String row = "<tr>\n" +
-                    "<td>" + resourceItem.getMethod() + " " + resourceItem.getPath() + "</td>\n" +
+                    "<td><a href=\"" + AdminServlet.path + "?page=resource&path=" + resourceItem.getPath() + "\">"
+                    + resourceItem.getMethod() + " " + resourceItem.getPath() + "</a></td>\n" +
                     "<td>" + resourceItem.getStrategy() + "</td>\n" +
                     "<td>" + "</td>\n" +
                     "</tr>";

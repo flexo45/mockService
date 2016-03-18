@@ -26,7 +26,7 @@
 
     <servlet>
         <servlet-name>CustomCallbackServlet</servlet-name>
-        <servlet-class>com.temafon.qa.mock.servlets.callback.CustomCallbackServlet</servlet-class>
+        <servlet-class>com.temafon.qa.mock.servlets.dynamicresource.DynamicResourceDispatherServlet</servlet-class>
     </servlet>
 
     <servlet>

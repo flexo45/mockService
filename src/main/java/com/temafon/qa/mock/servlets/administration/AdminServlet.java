@@ -29,11 +29,7 @@ public class AdminServlet extends HttpServlet {
 
             String pageParameter = request.getParameter("page");
             if(pageParameter == null){
-                contentParams.put("title", "Admin Console");
-                contentParams.put("datetime", new Date().toString());
-
-                response.getWriter().println(PageGenerator.getInstance().getAuthorizedAdminPage("welcome.html"
-                        , getDefaultTemplaterData(contentParams)));
+                displayDefaultAdminPage(response);
             }
             else if(pageParameter.equals("dynamic_resources")){
                 contentParams.put("title", "Dynamic Resources");
@@ -41,6 +37,13 @@ public class AdminServlet extends HttpServlet {
 
                 response.getWriter().println(PageGenerator.getInstance().getAuthorizedAdminPage("dynamic_resources.html"
                         , getDefaultTemplaterData(contentParams)));
+            }
+            else if(pageParameter.equals("resource")){
+                String path = request.getParameter("path");
+                if(path == null){
+                    displayDefaultAdminPage(response);
+                }
+                contentParams.put("title", "Dynamic Resource");
             }
             response.setStatus(HttpServletResponse.SC_OK);
         }
@@ -50,5 +53,13 @@ public class AdminServlet extends HttpServlet {
         pageParams.put("user", userProfile);
         pageParams.put("role", "default"); //TODO ROLES
         return pageParams;
+    }
+
+    private void displayDefaultAdminPage(HttpServletResponse response) throws IOException{
+        contentParams.put("title", "Admin Console");
+        contentParams.put("datetime", new Date().toString());
+
+        response.getWriter().println(PageGenerator.getInstance().getAuthorizedAdminPage("welcome.html"
+                , getDefaultTemplaterData(contentParams)));
     }
 }

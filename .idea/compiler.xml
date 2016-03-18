@@ -34,7 +34,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel target="1.7">
       <module name="mock" target="1.7" />
-      <module name="mock_servlets" target="1.7" />
+      <module name="mock_servlets" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
