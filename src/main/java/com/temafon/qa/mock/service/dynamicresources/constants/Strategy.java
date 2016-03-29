@@ -4,7 +4,7 @@ public enum Strategy {
 
     SEQUENCE, RANDOM, SCRIPT;
 
-    public Strategy parseString(String s){
+    public static Strategy parseString(String s){
         switch (s.toLowerCase()){
             case "sequence":
                 return SEQUENCE;

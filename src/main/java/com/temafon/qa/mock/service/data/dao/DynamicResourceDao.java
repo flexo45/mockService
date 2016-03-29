@@ -1,8 +1,6 @@
 package com.temafon.qa.mock.service.data.dao;
 
-import com.temafon.qa.mock.service.data.dataSet.DispatchStrategy;
-import com.temafon.qa.mock.service.data.dataSet.DynamicResource;
-import com.temafon.qa.mock.service.data.dataSet.Method;
+import com.temafon.qa.mock.service.data.dataSet.*;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -16,11 +14,18 @@ public class DynamicResourceDao {
 
     public DynamicResourceDao(Session session){this.session = session;}
 
-    public long insert(String name, long methodId, long strategyId) throws HibernateException {
+    public long insert(String name, long methodId, long strategyId, long defaultDynamicResponseId)
+            throws HibernateException {
         Method method = (Method) session.load(Method.class, methodId);
         DispatchStrategy strategy = (DispatchStrategy) session.load(DispatchStrategy.class, strategyId);
 
-        DynamicResource dynamicResource = new DynamicResource(name, method, strategy);
+        DynamicResponse dynamicResponse = null;
+        if(defaultDynamicResponseId > 0){
+            dynamicResponse =
+                    (DynamicResponse) session.load(DynamicResponse.class, defaultDynamicResponseId);
+        }
+
+        DynamicResource dynamicResource = new DynamicResource(name, method, strategy, dynamicResponse);
         return (Long) session.save(dynamicResource);
     }
 
@@ -36,5 +41,24 @@ public class DynamicResourceDao {
     public List<DynamicResource> selectAll() throws HibernateException{
         Query query = session.createQuery("from DynamicResource");
         return query.list();
+    }
+
+    public void update(long id, String name, long methodId, long strategyId, long defaultDynamicResponseId)
+            throws HibernateException{
+        Method method = (Method) session.load(Method.class, methodId);
+        DispatchStrategy strategy = (DispatchStrategy) session.load(DispatchStrategy.class, strategyId);
+
+        DynamicResource dynamicResource = (DynamicResource) session.load(DynamicResource.class, id);
+
+        dynamicResource.setPath(name);
+        dynamicResource.setMethod(method);
+        dynamicResource.setDispatch_strategy(strategy);
+
+        if(defaultDynamicResponseId > 0){
+            DynamicResponse dynamicResponse = (DynamicResponse) session.load(DynamicResponse.class, defaultDynamicResponseId);
+            dynamicResource.setDefaultDynamicResponse(dynamicResponse);
+        }
+
+        session.merge(dynamicResource);
     }
 }

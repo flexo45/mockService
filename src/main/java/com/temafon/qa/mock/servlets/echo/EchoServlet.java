@@ -73,7 +73,7 @@ public class EchoServlet extends HttpServlet {
         }
         else {
             response.setContentType("text/html;charset=utf-8");
-            result = PageGenerator.getInstance().getPage("echo.html", parameterMap);
+            result = PageGenerator.getInstance().getHtmlPage("echo.html", parameterMap);
         }
 
         try {

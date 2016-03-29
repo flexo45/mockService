@@ -58,7 +58,7 @@ public class MockService {
 
         servletContextHandler.addServlet(new ServletHolder(new SendMailServlet()), "/sendmail");
 
-        loadDefaultData();
+        //loadDefaultData();
 
         server.start();
 

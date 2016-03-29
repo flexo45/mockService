@@ -33,9 +33,26 @@ public class PageGenerator {
         return pageGenerator;
     }
 
-    public String getPage(String pageName, Map<String, Object> data) {
+    /*NEW*/
+    public String getAdminConsole(UserProfile profile, String group_content){
 
-        return getHtmlPage(pageName, data);
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("menu", getMainMenu());
+        data.put("auth_block", getAuthBlock(profile));
+        data.put("group_content", group_content);
+
+        return getContent("admin_console.html", data);
+    }
+    /*NEW*/
+    public String getMainPage(String content, String title) {
+
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("content", content);
+        data.put("title", title);
+
+        return getHtmlPage("main_page.html", data);
 
     }
 
@@ -75,7 +92,8 @@ public class PageGenerator {
         cfg = new Configuration();
     }
 
-    private String getElement(String elementName, Map<String, Object> content){
+    /*ACTUAL*/
+    public String getElement(String elementName, Map<String, Object> content){
         Writer stream = new StringWriter();
         try {
             Template template = cfg.getTemplate(ELEMENT_DIR + File.separator + elementName);
@@ -85,8 +103,8 @@ public class PageGenerator {
         }
         return stream.toString();
     }
-
-    private String getContent(String contentName, Map<String, Object> content){
+    /*ACTUAL*/
+    public String getContent(String contentName, Map<String, Object> content){
         Writer stream = new StringWriter();
         try {
             Template template = cfg.getTemplate(CONTENT_DIR + File.separator + contentName);
@@ -96,8 +114,8 @@ public class PageGenerator {
         }
         return stream.toString();
     }
-
-    private String getHtmlPage(String pageName, Map<String, Object> content){
+    /*ACTUAL*/
+    public String getHtmlPage(String pageName, Map<String, Object> content){
         Writer stream = new StringWriter();
         try {
             Template template = cfg.getTemplate(HTML_DIR + File.separator + pageName);
@@ -107,24 +125,31 @@ public class PageGenerator {
         }
         return stream.toString();
     }
-
+    /*ACTUAL*/
     private Map<String, String> getMenuItems(){
         Map<String, String> menu_items = new HashMap<>();
         menu_items.put("Index", AdminServlet.path);
         menu_items.put("Dynamic resources", AdminServlet.path + "?page=dynamic_resources");
         return menu_items;
     }
-
+    /*ACTUAL*/
     private String getMainMenu(){
-        Map<String, Object> menu = new HashMap<>();
+        Map<String, Object> menu_data = new HashMap<>();
+        Map<String, Object> menu_item_data = new HashMap<>();
         String main_menu = "";
         for(Map.Entry<String, String> it : getMenuItems().entrySet()){
-            main_menu = main_menu + "<li><a href=\"" + it.getValue() + "\">" + it.getKey() + "</a></li>";
-        }
-        menu.put("main_menu", main_menu);
-        return getElement("main_menu.html", menu);
-    }
 
+            menu_item_data.put("link", it.getValue());
+            menu_item_data.put("name", it.getKey());
+
+            String main_menu_item = getElement("main_menu_item.html", menu_item_data);
+
+            main_menu = main_menu + main_menu_item;
+        }
+        menu_data.put("main_menu", main_menu);
+        return getElement("main_menu.html", menu_data);
+    }
+    /*ACTUAL*/
     private String getAuthBlock(UserProfile userProfile){
         Map<String, Object> auth = new HashMap<>();
         auth.put("userName", userProfile.getLogin());

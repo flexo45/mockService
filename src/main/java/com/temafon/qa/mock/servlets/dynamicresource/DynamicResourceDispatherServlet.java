@@ -2,7 +2,7 @@ package com.temafon.qa.mock.servlets.dynamicresource;
 
 import com.temafon.qa.mock.service.dynamicresources.resource.DynamicResourceItem;
 import com.temafon.qa.mock.service.dynamicresources.DynamicResourcesService;
-import com.temafon.qa.mock.service.dynamicresources.resource.DynamicResponse;
+import com.temafon.qa.mock.service.dynamicresources.resource.DynamicResponseItem;
 import com.temafon.qa.mock.service.scripthandler.GroovyHandler;
 
 import javax.servlet.ServletException;
@@ -10,8 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 public class DynamicResourceDispatherServlet extends HttpServlet {
@@ -31,7 +29,7 @@ public class DynamicResourceDispatherServlet extends HttpServlet {
 
         resourceItem.setScript("return 'test1'");
 
-        DynamicResponse dynamicResponse1 = new DynamicResponse("test1");
+        DynamicResponseItem dynamicResponse1 = new DynamicResponseItem("test1");
 
         dynamicResponse1.addHeader("x-status-code", "200");
         dynamicResponse1.addHeader("x-status-text", "OK");
@@ -50,7 +48,7 @@ public class DynamicResourceDispatherServlet extends HttpServlet {
                 try {
                     String responseName = GroovyHandler.executeDispatchScript(resourceItem.getScript(), request);
 
-                    for (DynamicResponse dynamicResponse : resourceItem.getResponses()){
+                    for (DynamicResponseItem dynamicResponse : resourceItem.getResponses()){
                         if(dynamicResponse.getName().equals(responseName)){
                             dynamicResponse.processResponse(response);
                         }

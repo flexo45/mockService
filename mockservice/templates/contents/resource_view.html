@@ -1,6 +1,22 @@
+<script type="text/javascript">
+    function addResponse(){
+        var id = document.getElementById('resID').innerText;
+        window.location.assign('/admin?page=create_response&res_id=' + id);
+    }
+
+    function edit(){
+        var id = document.getElementById('resID').innerText;
+        window.location.assign('/admin?page=edit_resource&res_id=' + id);
+    }
+</script>
 <div>
+    <div id="menu">
+        <button onclick="edit()">Edit</button>
+    </div>
     <div id="title">
-        Resource: ${method} ${path}
+        Resource #<span id="resID">${resID}</span>:
+        <div id="method">${method}</div>
+        <div id="path">${path}</div>
     </div>
     <div id="strategy_type">
         Dispatch strategy: ${strategy}
@@ -10,6 +26,13 @@
     </div>
     <div>
         <div>Responses:</div>
+        <button onclick="addResponse()">Add</button>
+        <div>
+            Default response:
+        </div>
+        <div>
+            ${default_response}
+        </div>
         <div>
             ${responses}
         </div>

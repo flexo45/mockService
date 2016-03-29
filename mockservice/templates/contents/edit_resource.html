@@ -1,0 +1,227 @@
+<script type="text/javascript">
+    window.onload = function(){
+        var methodsRB = document.getElementsByClassName('method_radio');
+        for(var i = 0; i < methodsRB.length; i++ ){
+            methodsRB[i].onclick = methodSelected;
+        }
+
+        var strategiesRB = document.getElementsByClassName('strategy_radio');
+        for(var i = 0; i < strategiesRB.length; i++ ){
+            strategiesRB[i].onclick = strategySelected;
+        }
+
+        var request = {
+            action: "get_resource",
+            resource_path: document.getElementById('resource_path').innerText
+        };
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/admin', false);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(request));
+
+        if(xhr.status != 200){
+            alert('Error on load resource, http code from server: ' + xhr.status)
+        }
+        else{
+            JSON.parse(xhr.responseText, function(k, v){
+                if(k == 'name'){
+                    document.getElementById('name').value = v;
+                }
+                else if(k == 'method'){
+                    document.getElementById(v).checked = true;
+                    eventFire(document.getElementById(v), 'click');
+                }
+                else if(k == 'strategy'){
+                    document.getElementById(v).checked = true;
+                    eventFire(document.getElementById(v), 'click');
+                }
+                else if(k == 'script'){
+                    document.getElementById('script_text').innerText = v;
+                }
+                else if(k == 'default_response_id'){
+                    document.getElementById('default_response').querySelector('div.dr_view').id = v;
+                }
+                else if(k == 'default_response_name'){
+                    document.getElementById('default_response').querySelector('div.dr_view').innerText = v;
+                }
+            });
+        }
+    };
+
+    function eventFire(el, etype){
+        if (el.fireEvent) {
+            el.fireEvent('on' + etype);
+        }
+        else {
+            var evObj = document.createEvent('Events');
+            evObj.initEvent(etype, true, false);
+            el.dispatchEvent(evObj);
+        }
+    }
+
+    function methodSelected(event){
+        var get = document.getElementById('get');
+        var post = document.getElementById('post');
+
+        if(event.currentTarget == post){
+            post.className = 'method_radio selected';
+            get.className = 'method_radio';
+            get.checked = false;
+        }
+        else if(event.currentTarget == get){
+            get.className = 'method_radio selected';
+            post.className = 'method_radio';
+            post.checked = false;
+        }
+        else{
+            alert('Unexpected method selected');
+        }
+    }
+
+    function strategySelected(event){
+        var sequence = document.getElementById('sequence');
+        var random = document.getElementById('random');
+        var script = document.getElementById('script');
+
+        if(event.currentTarget == sequence){
+            sequence.className = 'strategy_radio selected';
+            random.className = 'strategy_radio';
+            script.className = 'strategy_radio';
+            random.checked = false;
+            script.checked = false;
+        }
+        else if(event.currentTarget == random){
+            random.className = 'strategy_radio selected';
+            sequence.className = 'strategy_radio';
+            script.className = 'strategy_radio';
+            sequence.checked = false;
+            script.checked = false;
+        }
+        else if(event.currentTarget == script){
+            script.className = 'strategy_radio selected';
+            sequence.className = 'strategy_radio';
+            random.className = 'strategy_radio';
+            sequence.checked = false;
+            random.checked = false;
+        }
+        else{
+            alert('Unexpected strategy selected');
+        }
+    }
+
+    function send(){
+        var resource = {
+            action: 'update_resource',
+            id: parseInt(document.getElementById('resID').innerText),
+            name: document.getElementById('name').value,
+            script: document.getElementById('script_text').value,
+            method: document.getElementById('method').querySelector('DIV > input.selected').id,
+            strategy: document.getElementById('strategy').querySelector('DIV > input.selected').id,
+            default_resp: parseInt(document.getElementById('default_response').querySelector('div.dr_view').id)
+        };
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/admin', false);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(resource));
+
+        if(xhr.status != 200){
+            alert('Error on update resource, http code from server: ' + xhr.status)
+        }
+        else{
+            if(xhr.getResponseHeader('X-Action-Code') == '200'){
+                window.location.assign('/admin?page=resource&res_id=' + resource.id)
+            }
+            else{
+                window.location.assign('/admin?page=dynamic_resources')
+            }
+        }
+    }
+
+    function select(event){
+        var selected_response_name = event.currentTarget.previousElementSibling.value;
+        var selected_response_id = event.currentTarget.previousElementSibling.id;
+        var control = document.getElementById('default_response')
+        var view = control.querySelector('div.dr_view')
+
+        view.innerHTML = "";
+        view.innerText = selected_response_name;
+        view.id = selected_response_id;
+
+        var button = document.createElement('button');
+        button.onclick = showList;
+        button.innerText = "Select";
+        control.appendChild(button);
+    }
+
+    function showList(){
+
+        var control = document.getElementById('default_response')
+        var view = control.querySelector('div.dr_view')
+        var button = control.querySelector('button')
+
+        var getAllResponsesByIdRequest = {
+            action: "get_responses",
+            resource_id: parseInt(document.getElementById('resID').innerText)
+        }
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/admin', false);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(getAllResponsesByIdRequest));
+
+        var list = document.createElement('div');
+
+        if(xhr.status != 200){
+            alert('Error on load responses, http code from server: ' + xhr.status)
+        }
+        else{
+            JSON.parse(xhr.responseText, function(k_id, v){
+                if(k_id > 0){
+                    var item = document.createElement('div');
+                    item.innerHTML = "<input id=\""+ k_id + "\" maxlength=\"100\" size=\"40\" type=\"text\" value=\""
+                        + v + "\" />" +
+                    " <button onclick=\"select(event)\">Select</button>"
+                    list.appendChild(item);
+                }
+            });
+        }
+
+        view.appendChild(list)
+
+        button.remove()
+
+    }
+</script>
+<div>
+    <div>
+        Edit resource #<span id="resID">${resID}</span> /<span id="resource_path">${path}</span>
+    </div>
+    <div>
+        <div>Resource path (aka name):</div>
+        <div><input maxlength="10" id="name" size="10" type="text" value="" /></div>
+    </div>
+    <div id="method">
+        <div>Method:</div>
+        <div>GET<input id="get" class="method_radio" type="radio" /></div>
+        <div>POST<input id="post" class="method_radio" type="radio" /></div>
+    </div>
+    <div id="default_response">
+        <div>Default Response:</div>
+        <div id="" class="dr_view">
+        </div>
+        <button onclick="showList()">Select</button>
+    </div>
+    <div id="strategy">
+        <div>Dispatch Strategy:</div>
+        <div>sequence<input id="sequence" class="strategy_radio" type="radio" /></div>
+        <div>random<input id="random" class="strategy_radio" type="radio" /></div>
+        <div>script<input id="script" class="strategy_radio" type="radio" /></div>
+    </div>
+    <div>
+        <div>Script:</div>
+        <div><textarea id="script_text" rows="10"></textarea></div>
+    </div>
+    <input type="button" onclick="send()" value="Save"/>
+</div>

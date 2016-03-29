@@ -1,13 +1,8 @@
 package com.temafon.qa.mock.service.data;
 
-import com.temafon.qa.mock.service.data.dao.DispatchStrategyDao;
-import com.temafon.qa.mock.service.data.dao.DynamicResourceDao;
-import com.temafon.qa.mock.service.data.dao.MethodDao;
-import com.temafon.qa.mock.service.data.dao.ScriptDao;
-import com.temafon.qa.mock.service.data.dataSet.DispatchStrategy;
-import com.temafon.qa.mock.service.data.dataSet.DynamicResource;
-import com.temafon.qa.mock.service.data.dataSet.Method;
-import com.temafon.qa.mock.service.data.dataSet.Script;
+import com.temafon.qa.mock.service.data.dao.*;
+import com.temafon.qa.mock.service.data.dataSet.*;
+import com.temafon.qa.mock.service.dynamicresources.constants.Strategy;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -113,12 +108,24 @@ public class DynamicResourceDataManager {
         }
     }
 
-    public long addDynamicResource(String path, long methodId, long strategyId) throws DBException {
+    public Script getScriptByResourceId(long resourceId) throws DBException{
+        try {
+            Session session = sessionFactory.openSession();
+            ScriptDao dao = new ScriptDao(session);
+            Script dataSet = dao.getByResourceId(resourceId);
+            session.close();
+            return dataSet;
+        } catch (HibernateException e) {
+            throw new DBException(e);
+        }
+    }
+
+    public long addDynamicResource(String path, long methodId, long strategyId, long defaultDynamicResponseId) throws DBException {
         try {
             Session session = sessionFactory.openSession();
             Transaction transaction = session.beginTransaction();
             DynamicResourceDao dao = new DynamicResourceDao(session);
-            long id = dao.insert(path, methodId, strategyId);
+            long id = dao.insert(path, methodId, strategyId, defaultDynamicResponseId);
             transaction.commit();
             session.close();
             return id;
@@ -127,14 +134,120 @@ public class DynamicResourceDataManager {
         }
     }
 
-    public DynamicResource getDynamicResource(String path) throws DBException{
+    public DynamicResource getDynamicResource(Long id) throws DBException{
         try {
             Session session = sessionFactory.openSession();
             DynamicResourceDao dao = new DynamicResourceDao(session);
-            DynamicResource dataSet = dao.getByPath(path);
+            DynamicResource dataSet = dao.get(id);
             session.close();
             return dataSet;
         } catch (HibernateException e) {
+            throw new DBException(e);
+        }
+    }
+
+    public long addDynamicResponse(String name, int code, byte[] content, String script, long resourceId) throws DBException {
+        try {
+            Session session = sessionFactory.openSession();
+            Transaction transaction = session.beginTransaction();
+            DynamicResponseDao dao = new DynamicResponseDao(session);
+            long id = dao.insert(name, code, content, script, resourceId);
+            transaction.commit();
+            session.close();
+            return id;
+        } catch (HibernateException e) {
+            throw new DBException(e);
+        }
+    }
+
+    public DynamicResponse getDynamicResponse(long id) throws DBException{
+        try {
+            Session session = sessionFactory.openSession();
+            DynamicResponseDao dao = new DynamicResponseDao(session);
+            DynamicResponse dataSet = dao.get(id);
+            session.close();
+            return dataSet;
+        }
+        catch (HibernateException e){
+            throw new DBException(e);
+        }
+    }
+
+    public long addHeader(String name, String value, long responseId) throws DBException {
+        try {
+            Session session = sessionFactory.openSession();
+            Transaction transaction = session.beginTransaction();
+            HeaderDao dao = new HeaderDao(session);
+            long id = dao.insert(name, value, responseId);
+            transaction.commit();
+            session.close();
+            return id;
+        } catch (HibernateException e) {
+            throw new DBException(e);
+        }
+    }
+
+    public Header getHeader(long id) throws DBException{
+        try {
+            Session session = sessionFactory.openSession();
+            HeaderDao dao = new HeaderDao(session);
+            Header dataSet = dao.get(id);
+            session.close();
+            return dataSet;
+        } catch (HibernateException e) {
+            throw new DBException(e);
+        }
+    }
+
+    public List<Header> getHeadersOfResponse(long responseId) throws DBException{
+        try {
+            Session session = sessionFactory.openSession();
+            HeaderDao dao = new HeaderDao(session);
+            List<Header> dataSetList = dao.getAllByResponse(responseId);
+            session.close();
+            return dataSetList;
+        } catch (HibernateException e) {
+            throw new DBException(e);
+        }
+    }
+
+    public List<DynamicResponse> getDynamicResponsesOfResource(long resourceId) throws DBException{
+        try {
+            Session session = sessionFactory.openSession();
+            DynamicResponseDao dao = new DynamicResponseDao(session);
+            List<DynamicResponse> dataSetList = dao.getAllByResource(resourceId);
+            session.close();
+            return dataSetList;
+        } catch (HibernateException e) {
+            throw new DBException(e);
+        }
+    }
+
+    public void updateDynamicResource(long id, String path, long methodId, long strategyId, long defaultDynamicResponseId)
+            throws DBException{
+        try {
+            Session session = sessionFactory.openSession();
+            Transaction transaction = session.beginTransaction();
+            DynamicResourceDao dao = new DynamicResourceDao(session);
+            dao.update(id, path, methodId, strategyId, defaultDynamicResponseId);
+            transaction.commit();
+            session.close();
+        }
+        catch (HibernateException e) {
+            throw new DBException(e);
+        }
+    }
+
+    public void updateScript(long id, String text) throws DBException{
+        try {
+            Session session = sessionFactory.openSession();
+            Transaction transaction = session.beginTransaction();
+            ScriptDao dao = new ScriptDao(session);
+            dao.update(id, text);
+            transaction.commit();
+            session.close();
+        }
+        catch (HibernateException e) {
             throw new DBException(e);
         }
     }

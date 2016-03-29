@@ -1,0 +1,114 @@
+<script type="text/javascript">
+    window.onload = function(){
+        var methodsRB = document.getElementsByClassName('method_radio');
+        for(var i = 0; i < methodsRB.length; i++ ){
+            methodsRB[i].onclick = methodSelected;
+        }
+
+        var strategiesRB = document.getElementsByClassName('strategy_radio');
+        for(var i = 0; i < strategiesRB.length; i++ ){
+            strategiesRB[i].onclick = strategySelected;
+        }
+    };
+
+    function methodSelected(event){
+        var get = document.getElementById('get');
+        var post = document.getElementById('post');
+
+        if(event.currentTarget == post){
+            post.className = 'method_radio selected';
+            get.className = 'method_radio';
+            get.checked = false;
+        }
+        else if(event.currentTarget == get){
+            get.className = 'method_radio selected';
+            post.className = 'method_radio';
+            post.checked = false;
+        }
+        else{
+            alert('Unexpected method selected');
+        }
+    }
+
+    function strategySelected(event){
+        var sequence = document.getElementById('sequence');
+        var random = document.getElementById('random');
+        var script = document.getElementById('script');
+
+        if(event.currentTarget == sequence){
+            sequence.className = 'strategy_radio selected';
+            random.className = 'strategy_radio';
+            script.className = 'strategy_radio';
+            random.checked = false;
+            script.checked = false;
+        }
+        else if(event.currentTarget == random){
+            random.className = 'strategy_radio selected';
+            sequence.className = 'strategy_radio';
+            script.className = 'strategy_radio';
+            sequence.checked = false;
+            script.checked = false;
+        }
+        else if(event.currentTarget == script){
+            script.className = 'strategy_radio selected';
+            sequence.className = 'strategy_radio';
+            random.className = 'strategy_radio';
+            sequence.checked = false;
+            random.checked = false;
+        }
+        else{
+            alert('Unexpected strategy selected');
+        }
+    }
+
+    function send(){
+
+        var resource = {
+            action: 'create_resource',
+            name: document.getElementById('name').value,
+            script: document.getElementById('script_text').value,
+            method: document.getElementById('method').querySelector('DIV > input.selected').id,
+            strategy: document.getElementById('strategy').querySelector('DIV > input.selected').id
+        };
+
+        var xhr = new XMLHttpRequest();
+
+        xhr.open('POST', '/admin', false);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(resource));
+
+        if(xhr.status != 200){
+            alert('Error on create, http code from server: ' + xhr.status)
+        }
+        else{
+            if(xhr.getResponseHeader('X-Action-Code') == '200'){
+                window.location.assign('/admin?page=resource&res_id=' + 'TODOresID')
+            }
+            else{
+                window.location.assign('/admin?page=dynamic_resources')
+            }
+        }
+    }
+</script>
+<div>
+    <div>
+        <div>Resource path (aka name):</div>
+        <div><input maxlength="10" id="name" size="10" type="text" value="" /></div>
+    </div>
+    <div id="method">
+        <div>Method:</div>
+        <div>GET<input id="get" type="radio" checked="checked" class="method_radio" /></div>
+        <div>POST<input id="post" type="radio" class="method_radio" /></div>
+    </div>
+    <div id="strategy">
+        <div>Dispatch Strategy:</div>
+        <div>sequence<input id="sequence" checked="checked" type="radio" class="strategy_radio" /></div>
+        <div>random<input id="random" type="radio" class="strategy_radio" /></div>
+        <div>script<input id="script" type="radio" class="strategy_radio" /></div>
+    </div>
+    <div>
+        <div>Script:</div>
+        <div><textarea id="script_text" rows="10"></textarea></div>
+    </div>
+    <button onclick="send()">Save</button>
+</div>

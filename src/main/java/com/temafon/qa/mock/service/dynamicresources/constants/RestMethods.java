@@ -4,7 +4,7 @@ public enum RestMethods {
 
     GET, POST;
 
-    public RestMethods parseString(String s){
+    public static RestMethods parseString(String s){
         switch (s.toLowerCase()){
             case "get":
                 return GET;

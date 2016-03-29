@@ -9,7 +9,7 @@ import org.hibernate.service.ServiceRegistry;
 public class DBManager {
 
     private static final String hibernate_show_sql = "true";
-    private static final String hibernate_hbm2ddl_auto = "create"; //update
+    private static final String hibernate_hbm2ddl_auto = "update"; //update //create
 
     private static DBManager instance;
 
@@ -45,6 +45,8 @@ public class DBManager {
         configuration.addAnnotatedClass(Script.class);
         configuration.addAnnotatedClass(DispatchStrategy.class);
         configuration.addAnnotatedClass(DynamicResource.class);
+        configuration.addAnnotatedClass(DynamicResponse.class);
+        configuration.addAnnotatedClass(Header.class);
 
         configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
         configuration.setProperty("hibernate.connection.driver_class", "org.h2.Driver");

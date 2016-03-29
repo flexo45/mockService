@@ -1,0 +1,89 @@
+<script type="text/javascript">
+    function addHeaderInput(){
+        var list = document.getElementById('header_list')
+        var div = document.createElement('div');
+        div.innerHTML = "<input id=\"h_name\" maxlength=\"100\" size=\"40\" type=\"text\" value=\"\" /> " +
+        "<input id=\"h_value\" maxlength=\"100\" size=\"40\" type=\"text\" value=\"\" />" +
+        "<button onclick=\"removeHeaderInput(event)\">Remove</button>";
+        list.appendChild(div);
+    }
+
+    function removeHeaderInput(event){
+        var elem = event.currentTarget.parentElement;
+        document.getElementById('header_list').removeChild(elem)
+    }
+
+    function sendRequestToCreate(){
+
+        var resID = document.getElementById('resID').innerText;
+        var headers_arr = [];
+        var headers_node_list = document.getElementById('header_list').getElementsByTagName('div');
+
+        if(headers_node_list.length > 0){
+            for(var i = 0; i < headers_node_list.length; i++){
+                var el = headers_node_list[i];
+                headers_arr[i] = el.querySelector('input#h_name').value + ':' + el.querySelector('input#h_value').value;
+            }
+        }
+        else{
+            headers_arr = null;
+        }
+
+        var request = {
+            action: "create_response",
+            resource_id: parseInt(resID),
+            name: document.getElementById('name').value,
+            headers: headers_arr,
+            code: parseInt(document.getElementById('code').value),
+            content: document.getElementById('content').value,
+            script: document.getElementById('script').value
+        };
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/admin', false);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(request));
+
+        if(xhr.status != 200){
+            alert('Error on create, http code from server: ' + xhr.status)
+        }
+        else{
+            if(xhr.getResponseHeader('X-Action-Code') == '200'){
+                window.location.assign('/admin?page=resource&res_id=' + request.resource_id)
+            }
+            else{
+                window.location.assign('/admin?page=dynamic_resources')
+            }
+        }
+    }
+</script>
+<div>
+    <div>
+        Create response for resource: #<span id="resID">${resID}</span> /<span id="resource">${path}</span>
+    </div>
+    <div>
+        <div>Response name:</div>
+        <div><input id="name" maxlength="10" size="10" type="text" value="" /></div>
+    </div>
+    <div>
+        <div>Response HTTP code:</div>
+        <div><input id="code" maxlength="3" size="3" type="number" value="200" /></div>
+    </div>
+    <div>
+        <div>Response headers</div>
+        <button onclick="addHeaderInput()">Add</button>
+        <div id="header_list">
+        </div>
+    </div>
+    <div>
+        <div>Content:</div>
+        <div><textarea id="content" rows="10"></textarea></div>
+    </div>
+    <div>
+        <div>Script:</div>
+        <div><textarea id="script" rows="10"></textarea></div>
+    </div>
+    <div>
+        <button onclick="sendRequestToCreate()">Save</button>
+    </div>
+</div>
